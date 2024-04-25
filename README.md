@@ -13,19 +13,104 @@ O sistema oferece as seguintes funcionalidades:
 
 ## Padrões de Projeto Utilizados
 
-### Strategy
+### Princípio da Responsabilidade Única (SRP): 
+    Cada classe tem uma responsabilidade única. Por exemplo, a classe Contato é responsável apenas por manter as informações do contato. A classe GerenciadorContatos é responsável por gerenciar os contatos.
 
-O padrão Strategy foi escolhido para implementar diferentes estratégias de busca de contatos. A classe `BuscaContatoStrategy` atua como uma interface comum para todas as estratégias. Neste projeto, a estratégia de busca por nome foi implementada. A principal vantagem do padrão Strategy é a capacidade de alterar dinamicamente o algoritmo de busca, tornando o sistema mais flexível e fácil de estender. Por exemplo, caso seja desejado adicionar a capacidade de busca por telefone no futuro, basta criar uma nova classe que implemente a interface `BuscaContatoStrategy`.
+### Princípio Aberto-Fechado (OCP): As classes BuscaContatoStrategy e BuscaContatoPorNomeStrategy exemplificam esse princípio. A classe base BuscaContatoStrategy é aberta para extensão (como demonstrado pela classe BuscaContatoPorNomeStrategy), mas fechada para modificação.
 
-### Facade
+### Princípio da Substituição de Liskov (LSP): 
+    A classe BuscaContatoPorNomeStrategy pode ser substituída pela classe base BuscaContatoStrategy sem afetar a corretude do programa.
 
-O padrão Facade foi escolhido devido à sua facilidade de uso. Ele fornece uma interface simplificada para o sistema de gerenciamento de contatos. A classe `GerenciadorContatosFacade` oferece métodos como adicionar, remover, listar e buscar contatos. A principal vantagem do Facade é simplificar o entendimento do código, permitindo que os usuários não precisem se preocupar com os detalhes de implementação de cada método, utilizando o Facade como único ponto de entrada para o sistema.
+### Princípio da Segregação da Interface (ISP): 
+    Embora JavaScript não tenha interfaces no sentido tradicional, o código ainda segue este princípio. Cada classe tem uma "interface" clara em termos de métodos que podem ser chamados, e nenhuma classe é forçada a implementar métodos que não usa.
 
-## Como Usar
+### Princípio da Inversão de Dependência (DIP): 
+    A classe GerenciadorContatos depende de uma abstração (BuscaContatoStrategy) e não de uma implementação específica. Isso é demonstrado pela passagem de uma instância de BuscaContatoPorNomeStrategy para o construtor de GerenciadorContatos.
 
-1. Baixe o código.
-2. Instale os pacotes do Node.js com o comando `npm install`.
-3. Execute o arquivo com o comando `node app.js`.
-4. Abra o navegador e acesse o seguinte endereço: `localhost:3000`.
-5. Recarregue a página e acompanhe o terminal da sua IDE.
-6. Interaja com o menu de opções, digitando o número correspondente à opção desejada.
+### Princio de Segregação de interfaces (ISP):
+     classe GerenciadorContatos depende de uma abstração (BuscaContatoStrategy) e não de uma implementação específica. Isso é demonstrado pela passagem de uma instância de BuscaContatoPorNomeStrategy para o construtor de GerenciadorContatos.
+
+### Casos de uso
+
+![image](https://github.com/zVihugo/armazendo/assets/118476125/8811b381-6034-4887-b9d6-bfa65798e37c)
+
+### Diagrama UML
+
+@startuml
+' Módulo Readline para interação com o usuário
+' Interface para estratégias de busca
+class BuscaContatoStrategy {
+    + buscar(contatos: List<Contato>, nome: String): List<Contato> # Método abstrato
+}
+
+' Estratégia de busca por nome
+class BuscaContatoPorNomeStrategy extends BuscaContatoStrategy {
+    + buscar(contatos: List<Contato>, nome: String): List<Contato>
+        : Filtra contatos por nome
+}
+
+' Classe para gerenciar contatos
+class GerenciadorContatos {
+    - contatos: List<Contato>
+    - buscaContatoStrategy: BuscaContatoStrategy
+
+    + GerenciadorContatos(buscaContatoStrategy: BuscaContatoStrategy)
+    + adicionarContato(nome: String, telefone: String, email: String): void
+    + removerContato(nome: String): void
+    + listarContatos(): void
+    + buscarContato(nome: String): void
+        : Delega a busca para a estratégia definida
+}
+
+' Interface para gerenciadores de contatos
+' (Opcional para ISP completo)
+interface GerenciadorContatosInterface {
+    + adicionarContato(nome: String, telefone: String, email: String): void
+    + removerContato(nome: String): void
+    + listarContatos(): void
+    + buscarContato(nome: String): void
+}
+
+' Classe para gerenciar vários gerenciadores de contatos
+class GerenciadorContatosFacade {
+    - gerenciadores: List<GerenciadorContatos>
+
+    + GerenciadorContatosFacade()
+    + adicionarGerenciador(gerenciador: GerenciadorContatos): void
+    + adicionarContato(nome: String, telefone: String, email: String): void
+        : Envia para todos os gerenciadores
+    + removerContato(nome: String): void
+        : Envia para todos os gerenciadores
+    + listarContatos(): void
+        : Envia para todos os gerenciadores
+    + buscarContato(nome: String): void
+        : Envia para todos os gerenciadores
+}
+
+' Classe de exemplo de gerenciador de contatos
+class GerenciadorContatosSimples implements GerenciadorContatosInterface {
+    - contatos: List<Contato>
+
+    + adicionarContato(nome: String, telefone: String, email: String): void
+    + removerContato(nome: String): void
+    + listarContatos(): void
+    + buscarContato(nome: String): void
+}
+
+' Relações de agregação e implementação
+Contato <|-- o Contato
+BuscaContatoStrategy o-- BuscaContatoPorNomeStrategy
+GerenciadorContatos o-- GerenciadorContatosFacade
+GerenciadorContatosFacade o-- GerenciadorContatos
+GerenciadorContatos implements GerenciadorContatosInterface
+
+' Direção do diagrama
+right to left direction
+
+' Criação e desativação de instâncias (opcional)
+activate GerenciadorDeGerenciadores
+
+create GerenciadorDeGerenciadores
+
+deactivate GerenciadorDeGerenciadores
+@enduml
