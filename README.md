@@ -13,10 +13,17 @@ O sistema oferece as seguintes funcionalidades:
 
 ## Padrões de Projeto Utilizados
 
+#### Strategy: 
+    A classe abstrata BuscaContatoStrategy define uma interface para estratégias de busca de contatos. As classes concretas BuscaContatoPorNomeStrategy e BuscaContatoPorEmailStrategy implementam essa interface, fornecendo diferentes maneiras de buscar contatos.
+    
+### Facade: 
+    A classe GerenciadorContatosFacade encapsula a complexidade das classes GerenciadorContatos e BuscaContatoStrategy, fornecendo uma interface simples para adicionar, remover, listar e buscar contatos.
+
 ### Princípio da Responsabilidade Única (SRP): 
     Cada classe tem uma responsabilidade única. Por exemplo, a classe Contato é responsável apenas por manter as informações do contato. A classe GerenciadorContatos é responsável por gerenciar os contatos.
 
-### Princípio Aberto-Fechado (OCP): As classes BuscaContatoStrategy e BuscaContatoPorNomeStrategy exemplificam esse princípio. A classe base BuscaContatoStrategy é aberta para extensão (como demonstrado pela classe BuscaContatoPorNomeStrategy), mas fechada para modificação.
+### Princípio Aberto-Fechado (OCP): 
+    As classes BuscaContatoStrategy e BuscaContatoPorNomeStrategy exemplificam esse princípio. A classe base BuscaContatoStrategy é aberta para extensão (como demonstrado pela classe BuscaContatoPorNomeStrategy), mas fechada para modificação.
 
 ### Princípio da Substituição de Liskov (LSP): 
     A classe BuscaContatoPorNomeStrategy pode ser substituída pela classe base BuscaContatoStrategy sem afetar a corretude do programa.
