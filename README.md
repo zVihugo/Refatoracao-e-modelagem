@@ -43,7 +43,6 @@ O sistema oferece as seguintes funcionalidades:
 
 ### Diagrama UML
 
-@startuml
 ' Módulo Readline para interação com o usuário
 ' Interface para estratégias de busca
 class BuscaContatoStrategy {
@@ -120,4 +119,4 @@ activate GerenciadorDeGerenciadores
 create GerenciadorDeGerenciadores
 
 deactivate GerenciadorDeGerenciadores
-@enduml
+
